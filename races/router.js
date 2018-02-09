@@ -16,6 +16,7 @@ const jwtAuth = passport.authenticate('jwt', { session: false });
 
 // Pulls all of the existing races from the API
 router.get('/', jsonParser, (req, res)  => {
+  console.log('running races');
   Race
     .find()
     .then(races => {

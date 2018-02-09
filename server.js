@@ -21,7 +21,7 @@ passport.use(basicStrategy);
 passport.use(jwtStrategy);
 
 app.use(morgan('common', { skip: () => process.env.NODE_ENV === 'test' }));
-app.use(cors());
+app.use(cors({origin: 'http://localhost:4200'}));
 
 app.use(express.static(path.join(__dirname, 'public')));
 

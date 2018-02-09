@@ -7,6 +7,8 @@ const { User } = require('../users/models');
 const { JWT_SECRET } = require('../config');
 
 const basicStrategy = new BasicStrategy((username, password, callback) => {
+  console.log('running basic strategy');
+  console.log(username, password);
   let user;
   User.findOne({ username: username })
     .then(_user => {
