@@ -59,8 +59,6 @@ router.get('/:id', jsonParser, (req, res)  => {
 
 // Updates a specified race in the API
 router.put('/:id', jsonParser, jwtAuth, (req, res) => {
-  console.log(req.body);
-  console.log(req.params.id, req.body._id);
   if (!(req.params.id && req.body._id && req.params.id === req.body._id)) {
     res.status(400).json({
       error: 'Request path id and request body id values must match'
