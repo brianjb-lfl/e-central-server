@@ -73,46 +73,24 @@ router.put('/:id', jsonParser, jwtAuth, (req, res) => {
     .catch(err => res.status(500).json({message: 'Internal server error'}));
 });
 
-// Apply voter's ballot
-router.put('/votes', jsonParser, (req, res) => {
-
-  let promiseArr = [];
-  Object.keys(req.body.votes).forEach( key => {
-    promiseArr.push(
-      Race
-      .update({_id: key, 'candidates._id': req.body.votes[key]},
-        {$inc: {'candidates.$.candidate.votes': 1}}
-      )
+// Increases a race's candidate's vote count by 1
+router.put('/ballot/:id', jsonParser, jwtAuth, (req, res) => {
+  if(!(req.params.id && req.body._id && req.params.id === req.body._id)) {
+    res.status(400).json({
+      error: 'Request path id and body id values must match'
+    });
+  }
+  Race
+    .update({_id: req.body._id, 'candidates._id': req.body['candidates._id']},
+      {$inc: {'candidates.$.candidate.votes': 1}}
     )
-  });
-
-  Promise.all(promiseArr)
-    .then( () => {
+    .then(race => {
       res.status(204).end();
     })
     .catch(err => {
       res.status(500).json({message: 'Internal server error'});
     });
 });
-
-// // Increases a race's candidate's vote count by 1
-// router.put('/votes/:id', jsonParser, jwtAuth, (req, res) => {
-//   if(!(req.params.id && req.body._id && req.params.id === req.body._id)) {
-//     res.status(400).json({
-//       error: 'Request path id and body id values must match'
-//     });
-//   }
-//   Race
-//     .update({_id: req.body._id, 'candidates._id': req.body['candidates._id']},
-//       {$inc: {'candidates.$.candidate.votes': 1}}
-//     )
-//     .then(race => {
-//       res.status(204).end();
-//     })
-//     .catch(err => {
-//       res.status(500).json({message: 'Internal server error'});
-//     });
-// });
 
 // Adds a race to the API
 router.post('/', jsonParser, jwtAuth, (req, res) => {
@@ -148,7 +126,6 @@ router.delete('/:id', jwtAuth, (req, res) => {
   Race
     .findByIdAndRemove(req.params.id)
     .then(() => {
-      console.log(`Deleted race with id = ${req.params.id}`);
       res.status(204).end();
     });
 });
