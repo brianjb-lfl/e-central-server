@@ -111,6 +111,8 @@ router.post('/', jsonParser, jwtAuth, (req, res) => {
       city: req.body.city,
       state: req.body.state,
       district: req.body.district,
+      racelevel: req.body.racelevel,
+      racesort: req.body.racesort,
       candidates: req.body.candidates})
     .then(
       race => res.status(201).json(race.apiRepr()))

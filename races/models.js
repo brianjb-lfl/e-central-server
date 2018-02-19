@@ -23,6 +23,12 @@ const RaceSchema = mongoose.Schema({
     type: String,
     required: true
   },
+  racelevel: {
+    type: Number
+  },
+  racesort: {
+    type: Number
+  },
   candidates: [{
     candidate: {
       name: {
@@ -40,7 +46,18 @@ const RaceSchema = mongoose.Schema({
 // Combines the state and district into a string
 RaceSchema.virtual('raceLabel')
   .get(function() {
-    return `${this.state} - Dist ${this.district}`;
+    if(this.state === 'n/a') {
+      return `U.S. ${this.type}`
+    }
+    else if(this.city === 'n/a') {
+      return `${this.type} - State of ${this.state}`
+    }
+    else if(this.district === 'n/a') {
+      return `${this.type} - ${this.city}, ${this.state}`
+    }
+    else {
+      return `${this.type} - ${this.city}, ${this.state} Dist ${this.district}`
+    }
   });
 
 // Returns the created race with a specific format
@@ -51,6 +68,8 @@ RaceSchema.methods.apiRepr = function () {
     city: this.city,
     state: this.state,
     district: this.district,
+    racelevel: this.racelevel,
+    racesort: this.racesort,
     candidates: this.candidates,
     label: this.raceLabel
   };
